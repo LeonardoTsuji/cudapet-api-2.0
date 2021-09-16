@@ -1,9 +1,12 @@
 import 'package:cuidapet_api_2/app/routers/i_router.dart';
+import 'package:cuidapet_api_2/modules/user/user_router.dart';
 import 'package:shelf_router/shelf_router.dart';
 
 class RouterConfig {
   final Router _router;
-  final List<IRouter> _routers = [];
+  final List<IRouter> _routers = [
+    UserRouter(),
+  ];
 
   RouterConfig(this._router);
 
