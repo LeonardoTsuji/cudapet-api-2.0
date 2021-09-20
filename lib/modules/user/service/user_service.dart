@@ -1,11 +1,16 @@
+import 'package:cuidapet_api_2/app/exceptions/service_exception.dart';
 import 'package:cuidapet_api_2/app/exceptions/user_notfound_exception.dart';
 import 'package:cuidapet_api_2/app/helpers/jwt_helper.dart';
 import 'package:cuidapet_api_2/app/logger/i_logger.dart';
 import 'package:cuidapet_api_2/entities/user.dart';
 import 'package:cuidapet_api_2/modules/user/data/i_user_repository.dart';
+import 'package:cuidapet_api_2/modules/user/view_models/refresh_token_view_model.dart';
+import 'package:cuidapet_api_2/modules/user/view_models/update_url_avatar_view_model.dart';
 import 'package:cuidapet_api_2/modules/user/view_models/user_confirm_input_model.dart';
+import 'package:cuidapet_api_2/modules/user/view_models/user_refresh_token_input_model.dart';
 import 'package:cuidapet_api_2/modules/user/view_models/user_save_input_model.dart';
 import 'package:injectable/injectable.dart';
+import 'package:jaguar_jwt/jaguar_jwt.dart';
 
 import './i_user_service.dart';
 
@@ -66,4 +71,53 @@ class UserService implements IUserService {
     await userRepository.updateUserDeviceTokenAndRefreshToken(user);
     return refreshToken;
   }
+
+  @override
+  Future<RefreshTokenViewModel> refreshToken(
+      UserRefreshTokenInputModel model) async {
+    _validateRefreshToken(model);
+    final newAccessToken = JwtHelper.generateJWT(model.user, model.supplier);
+    final newRefreshToken =
+        JwtHelper.refreshToken(newAccessToken.replaceAll('Bearer ', ''));
+
+    final user = User(
+      id: model.user,
+      refreshToken: newRefreshToken,
+    );
+
+    await userRepository.updateRefreshToken(user);
+
+    return RefreshTokenViewModel(
+        accessToken: newAccessToken, refreshToken: newRefreshToken);
+  }
+
+  void _validateRefreshToken(UserRefreshTokenInputModel model) {
+    try {
+      final refreshToken = model.refreshToken.split(' ');
+
+      if (refreshToken.length != 2 || refreshToken.first != 'Bearer') {
+        log.error('Refresh token invalido');
+        throw ServiceException('Refresh token invalido');
+      }
+
+      final refreshTokenClaim = JwtHelper.getClaims(refreshToken.last);
+      refreshTokenClaim.validate(issuer: model.accessToken);
+    } on ServiceException {
+      rethrow;
+    } on JwtException catch (e) {
+      log.error('Refresh token invalido', e);
+      throw ServiceException('Refresh token invalido');
+    } catch (e) {
+      throw ServiceException('Erro ao validar refresh token');
+    }
+  }
+
+  @override
+  Future<User> updateAvatar(UpdateUrlAvatarViewModel viewModel) async {
+    await userRepository.updateUrlAvatar(viewModel.userId, viewModel.urlAvatar);
+    return findById(viewModel.userId);
+  }
+
+  @override
+  Future<User> findById(int id) => userRepository.findById(id);
 }
