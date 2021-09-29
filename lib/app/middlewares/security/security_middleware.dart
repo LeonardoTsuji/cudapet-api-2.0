@@ -19,6 +19,14 @@ class SecurityMiddleware extends Middlewares {
       url: '/auth/register',
       method: 'POST',
     ),
+    SecuritySkipUrl(
+      url: '/suppliers/user',
+      method: 'GET',
+    ),
+    SecuritySkipUrl(
+      url: '/suppliers/user',
+      method: 'POST',
+    ),
   ];
 
   SecurityMiddleware(this.log);
@@ -62,7 +70,7 @@ class SecurityMiddleware extends Middlewares {
       final securityHeaders = {
         'user': userId,
         'access_token': authorizationToken,
-        'supplier': supplierId
+        'supplier': supplierId != null ? '$supplierId' : null
       };
 
       return innerHandler(request.change(headers: securityHeaders));

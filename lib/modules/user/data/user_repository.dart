@@ -243,4 +243,27 @@ class UserRepository implements IUserRepository {
       await conn?.close();
     }
   }
+
+  @override
+  Future<void> updateDeviceToken(int id, String token, String platform) async {
+    MySqlConnection? conn;
+
+    try {
+      conn = await connection.openConnection();
+      var set = '';
+      if (platform == 'ios') {
+        set = 'ios_token = ?';
+      } else {
+        set = 'android_token = ?';
+      }
+
+      final query = 'update usuario set $set where id = ?';
+      await conn.query(query, [token, id]);
+    } on MySqlException catch (e, s) {
+      log.error('Erro ao atualizar o device token', e, s);
+      throw DatabaseException();
+    } finally {
+      await conn?.close();
+    }
+  }
 }

@@ -10,4 +10,5 @@ abstract class IUserRepository {
   Future<void> updateRefreshToken(User user);
   Future<User> findById(int id);
   Future<void> updateUrlAvatar(int id, String urlAvatar);
+  Future<void> updateDeviceToken(int id, String token, String platform);
 }
