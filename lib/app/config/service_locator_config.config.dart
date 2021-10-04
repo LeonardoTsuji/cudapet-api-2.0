@@ -7,21 +7,25 @@
 import 'package:get_it/get_it.dart' as _i1;
 import 'package:injectable/injectable.dart' as _i2;
 
-import '../../modules/categories/controller/categories_controller.dart' as _i27;
+import '../../modules/categories/controller/categories_controller.dart' as _i31;
 import '../../modules/categories/data/categories_repository.dart' as _i21;
 import '../../modules/categories/data/i_categories_repository.dart' as _i20;
 import '../../modules/categories/service/categories_service.dart' as _i23;
 import '../../modules/categories/service/i_categories_service.dart' as _i22;
+import '../../modules/chat/data/chat_repository.dart' as _i25;
+import '../../modules/chat/data/i_chat_repository.dart' as _i24;
+import '../../modules/chat/service/chat_service.dart' as _i27;
+import '../../modules/chat/service/i_chat_service.dart' as _i26;
 import '../../modules/schedules/controller/schedule_controller.dart' as _i17;
 import '../../modules/schedules/data/i_schedule_repository.dart' as _i6;
 import '../../modules/schedules/data/schedule_repository.dart' as _i7;
 import '../../modules/schedules/service/i_schedule_service.dart' as _i9;
 import '../../modules/schedules/service/schedule_service.dart' as _i10;
-import '../../modules/supplier/controller/supplier_controller.dart' as _i26;
+import '../../modules/supplier/controller/supplier_controller.dart' as _i30;
 import '../../modules/supplier/data/i_supplier_repository.dart' as _i11;
 import '../../modules/supplier/data/supplier_repository.dart' as _i12;
-import '../../modules/supplier/service/i_supplier_service.dart' as _i24;
-import '../../modules/supplier/service/supplier_service.dart' as _i25;
+import '../../modules/supplier/service/i_supplier_service.dart' as _i28;
+import '../../modules/supplier/service/supplier_service.dart' as _i29;
 import '../../modules/user/controller/auth_controller.dart' as _i19;
 import '../../modules/user/controller/user_controller.dart' as _i18;
 import '../../modules/user/data/i_user_repository.dart' as _i13;
@@ -61,12 +65,16 @@ _i1.GetIt $initGetIt(_i1.GetIt get,
       connection: get<_i3.IDatabaseConnection>(), log: get<_i8.ILogger>()));
   gh.lazySingleton<_i22.ICategoriesService>(() =>
       _i23.CategoriesService(repository: get<_i20.ICategoriesRepository>()));
-  gh.lazySingleton<_i24.ISupplierService>(() => _i25.SupplierService(
+  gh.lazySingleton<_i24.IChatRepository>(() => _i25.ChatRepository(
+      connection: get<_i3.IDatabaseConnection>(), log: get<_i8.ILogger>()));
+  gh.lazySingleton<_i26.IChatService>(
+      () => _i27.ChatService(repository: get<_i24.IChatRepository>()));
+  gh.lazySingleton<_i28.ISupplierService>(() => _i29.SupplierService(
       repository: get<_i11.ISupplierRepository>(),
       userService: get<_i15.IUserService>()));
-  gh.factory<_i26.SupplierController>(() => _i26.SupplierController(
-      service: get<_i24.ISupplierService>(), log: get<_i8.ILogger>()));
-  gh.factory<_i27.CategoriesController>(
-      () => _i27.CategoriesController(service: get<_i22.ICategoriesService>()));
+  gh.factory<_i30.SupplierController>(() => _i30.SupplierController(
+      service: get<_i28.ISupplierService>(), log: get<_i8.ILogger>()));
+  gh.factory<_i31.CategoriesController>(
+      () => _i31.CategoriesController(service: get<_i22.ICategoriesService>()));
   return get;
 }
