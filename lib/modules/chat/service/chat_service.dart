@@ -13,6 +13,7 @@ class ChatService implements IChatService {
 
   ChatService({
     required this.repository,
+    required this.pushNotificationFacade,
   });
 
   @override
@@ -21,6 +22,8 @@ class ChatService implements IChatService {
   @override
   Future<void> notifyChat(ChatNotifyViewModel model) async {
     final chat = await repository.findChatById(model.chat);
+
+    if (chat == null) throw Exception('Chat não encontrado');
 
     switch (model.notificationUserType) {
       case NotificationUserType.user:
