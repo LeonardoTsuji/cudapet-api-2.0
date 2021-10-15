@@ -12,6 +12,19 @@ class UserUpdateTokenDeviceInputModel extends RequestMapping {
   @override
   void map() {
     token = data['token'];
-    platform = (data['plataform'].toLowerCase() == 'ios' ? 'ios' : 'android');
+    platform = (data['platform'].toLowerCase() == 'ios' ? 'ios' : 'android');
   }
+
+  @override
+  bool operator ==(Object other) {
+    if (identical(this, other)) return true;
+
+    return other is UserUpdateTokenDeviceInputModel &&
+        other.userId == userId &&
+        other.token == token &&
+        other.platform == platform;
+  }
+
+  @override
+  int get hashCode => userId.hashCode ^ token.hashCode ^ platform.hashCode;
 }
